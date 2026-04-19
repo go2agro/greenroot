@@ -27,16 +27,22 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
         throw new Error('Not authenticated');
       }
 
-      const { error: insertError } = await supabase.from('applications').insert({
-        student_id: user.id,
-        internship_id: resolvedParams.id,
-        cover_letter: coverLetter,
-        status: 'pending',
-      });
+      const { data: newApplication, error: insertError } = await supabase
+        .from('applications')
+        .insert({
+          student_id: user.id,
+          internship_id: resolvedParams.id,
+          cover_letter: coverLetter,
+          status: 'pending',
+          overall_status: 'draft',
+          current_step: 1,
+        })
+        .select()
+        .single();
 
       if (insertError) throw insertError;
 
-      router.push('/dashboard/applications?success=true');
+      router.push(`/dashboard/applications/${newApplication.id}`);
     } catch (err: any) {
       setError(err.message || 'Failed to submit application');
     } finally {
