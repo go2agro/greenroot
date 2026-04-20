@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
+import { checkProfileCompletion, formatMissingFields } from '@/lib/utils/profile';
+import { Profile } from '@/types';
 
 export default async function InternshipDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
@@ -8,6 +10,10 @@ export default async function InternshipDetailPage({ params }: { params: { id: s
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
 
   const { data: internship } = await supabase
     .from('internships')
@@ -25,6 +31,14 @@ export default async function InternshipDetailPage({ params }: { params: { id: s
     .eq('student_id', user?.id)
     .eq('internship_id', params.id)
     .single();
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  const profileStatus = checkProfileCompletion(profile as Profile);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -114,6 +128,58 @@ export default async function InternshipDetailPage({ params }: { params: { id: s
                       Status: <span className="capitalize">{existingApplication.status}</span>
                     </p>
                   </div>
+                </div>
+                <Link
+                  href={`/dashboard/applications/${existingApplication.id}`}
+                  className="mt-4 inline-block text-green-700 hover:text-green-800 font-semibold text-sm"
+                >
+                  View Application Details →
+                </Link>
+              </div>
+            ) : !profileStatus.isComplete ? (
+              <div>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-start">
+                    <svg className="w-6 h-6 text-yellow-600 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="font-semibold text-yellow-900 mb-1">Complete Your Profile First</p>
+                      <p className="text-yellow-800 text-sm mb-2">
+                        You need to complete your profile before applying to internships.
+                      </p>
+                      <p className="text-yellow-800 text-sm mb-2">
+                        <span className="font-medium">Profile Completion: {profileStatus.completionPercentage}%</span>
+                      </p>
+                      {profileStatus.missingFields.length > 0 && (
+                        <div className="text-yellow-800 text-sm">
+                          <p className="font-medium mb-1">Missing Information:</p>
+                          <ul className="list-disc list-inside space-y-0.5 ml-2">
+                            {profileStatus.missingFields.slice(0, 5).map((field, index) => (
+                              <li key={index}>{field}</li>
+                            ))}
+                            {profileStatus.missingFields.length > 5 && (
+                              <li>...and {profileStatus.missingFields.length - 5} more</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <Link
+                    href="/dashboard/profile"
+                    className="flex-1 text-center bg-primary-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors duration-200"
+                  >
+                    Complete Profile
+                  </Link>
+                  <button
+                    disabled
+                    className="flex-1 bg-gray-300 text-gray-500 py-3 rounded-lg text-lg font-semibold cursor-not-allowed"
+                  >
+                    Apply Now
+                  </button>
                 </div>
               </div>
             ) : (
