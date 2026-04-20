@@ -47,13 +47,13 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/login"
-              className="text-gray-700 hover:text-primary-600 transition-colors duration-200"
+              className="text-gray-700 hover:text-primary-600 transition-colors duration-200 font-medium"
             >
               Login
             </Link>
             <Link
               href="/signup"
-              className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
+              className="bg-primary-600 text-white px-6 py-2.5 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-semibold"
             >
               Sign Up
             </Link>
