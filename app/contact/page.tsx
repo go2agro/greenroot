@@ -115,7 +115,7 @@ export default function ContactPage() {
                 <h2 className="text-[2.75rem] font-bold leading-[1.15] mb-8">Visit Our Office</h2>
                 <div className="rounded-2xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.12)] h-[500px]">
                   <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.4747!2d73.9376!3d18.5556!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c1b0c0c0c0c1%3A0x1!2sCity%20Vista%2C%20Kharadi%2C%20Pune!5e0!3m2!1sen!2sin!4v1234567890"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3910.32114973219!2d73.94572771089271!3d18.561620082467098!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c3e034dd1105%3A0x99be83af682da9b6!2sGo2Agro!5e1!3m2!1sen!2sus!4v1776698263840!5m2!1sen!2sus"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
