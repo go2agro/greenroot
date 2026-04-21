@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import DashboardNav from '@/components/dashboard/DashboardNav';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
-export default async function DashboardLayout({
+export default async function StudentDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -28,9 +28,12 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DashboardNav userRole="student" userName={profile?.full_name || user.email} />
+    <DashboardLayout 
+      userRole="student" 
+      userName={profile?.full_name || user.email?.split('@')[0]} 
+      userImage={profile?.profile_picture}
+    >
       {children}
-    </div>
+    </DashboardLayout>
   );
 }
