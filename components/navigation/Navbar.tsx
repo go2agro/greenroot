@@ -11,7 +11,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/internships', label: 'Internships' },
+    { href: '/dashboard/internships', label: 'Internships' },
     { href: '/contact', label: 'Contact' },
   ];
 
@@ -47,15 +47,9 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/login"
-              className="text-gray-700 hover:text-primary-600 transition-colors duration-200"
+              className="gradient-primary text-white px-8 py-3.5 rounded-full text-base font-semibold hover:scale-[1.02] transition-transform duration-200"
             >
               Login
-            </Link>
-            <Link
-              href="/signup"
-              className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
-            >
-              Sign Up
             </Link>
           </div>
 
@@ -105,17 +99,10 @@ export default function Navbar() {
             <div className="pt-4 space-y-2">
               <Link
                 href="/login"
-                className="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md"
+                className="block px-8 py-3.5 gradient-primary text-white text-center rounded-full font-semibold hover:scale-[1.02] transition-transform duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Login
-              </Link>
-              <Link
-                href="/signup"
-                className="block px-3 py-2 bg-primary-600 text-white text-center rounded-md hover:bg-primary-700"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sign Up
               </Link>
             </div>
           </div>
