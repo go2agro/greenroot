@@ -34,8 +34,8 @@ export default function DashboardLayout({ userRole, userName, userImage, childre
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
-      <div className="flex flex-col flex-1">
-        <header className="bg-green-50/50 h-20 flex items-center justify-between px-8 z-30">
+      <div className="flex flex-col flex-1 h-screen overflow-hidden">
+        <header className="bg-green-50/50 h-20 flex items-center justify-between px-8 z-30 flex-shrink-0">
           <div className="flex items-center">
             <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3 shadow-sm">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,10 +71,10 @@ export default function DashboardLayout({ userRole, userName, userImage, childre
           </div>
         </header>
 
-        <div className="flex flex-1 overflow-hidden mt-2">
+        <div className="flex flex-1 overflow-hidden mt-2 min-h-0">
           <Sidebar userRole={userRole} />
           
-          <main className="flex-1 overflow-y-auto bg-gray-50 p-8 pb-24 md:pb-8">
+          <main className="flex-1 overflow-y-auto bg-gray-50 p-8">
             {children}
           </main>
         </div>
