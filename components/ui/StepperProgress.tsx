@@ -26,7 +26,7 @@ export default function StepperProgress({
             <div className="flex flex-col items-center relative">
               {/* Connecting Line (left side) */}
               {index > 0 && (
-                <div className="absolute top-5 right-full w-[200%] h-[3px] -z-0">
+                <div className="absolute top-2.5 right-full w-[200%] h-[3px] -z-0">
                   <div
                     className={`h-full ${
                       isCompleted
@@ -40,13 +40,13 @@ export default function StepperProgress({
               {/* Step Circle */}
               <div className="relative flex items-center justify-center mb-2 bg-white z-10">
                 {isCompleted ? (
-                  <div className="w-10 h-10 rounded-full bg-green-500 border-[6px] border-green-500 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-green-500 border-[6px] border-green-500 flex items-center justify-center">
                     <svg
                       className="w-4 h-4 text-white"
                       fill="none"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth="3"
+                      strokeWidth="4"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
@@ -54,16 +54,16 @@ export default function StepperProgress({
                     </svg>
                   </div>
                 ) : isCurrent ? (
-                  <div className="w-10 h-10 rounded-full bg-white border-[3px] border-green-500" />
+                  <div className="w-6 h-6 rounded-full bg-white border-[4px] border-green-500" />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-white border-[3px] border-gray-300" />
+                  <div className="w-6 h-6 rounded-full bg-white border-[2px] border-gray-300" />
                 )}
               </div>
               
               {/* Step Label */}
               {labels && labels[index] && (
                 <p className={`text-xs md:text-sm text-center whitespace-nowrap ${
-                  isCompleted || isCurrent ? 'font-medium text-gray-900' : 'text-gray-500'
+                  isCompleted || isCurrent ? 'font-medium text-black' : 'text-gray-500'
                 }`}>
                   {labels[index]}
                 </p>
