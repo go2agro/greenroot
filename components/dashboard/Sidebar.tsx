@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 interface MenuItem {
   href: string;
@@ -11,11 +12,9 @@ interface MenuItem {
 
 interface SidebarProps {
   userRole: 'student' | 'admin';
-  isOpen: boolean;
-  onClose: () => void;
 }
 
-export default function Sidebar({ userRole, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ userRole }: SidebarProps) {
   const pathname = usePathname();
 
   const studentLinks: MenuItem[] = [
@@ -125,53 +124,50 @@ export default function Sidebar({ userRole, isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
-          onClick={onClose}
-        />
-      )}
-      
+      {/* Desktop Sidebar */}
       <aside
-        className={`fixed top-4 left-4 bottom-4 w-[190px] bg-green-600 rounded-tr-3xl rounded-br-3xl flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-[210px]'
-        }`}
+        className="hidden md:flex w-[210px] bg-green-600 rounded-tr-[40px] rounded-br-[40px] flex-col z-20"
       >
-        <nav className="flex-1 px-4 py-6 space-y-1 relative mt-4">
+        <nav className="flex-1 px-3 py-10 space-y-2">
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={onClose}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
+                className={`flex items-center space-x-3 px-6 py-3 rounded-xl transition-all duration-200 relative group ${
                   active
-                    ? 'text-green-800 font-medium'
-                    : 'text-white hover:bg-green-700'
+                    ? 'text-gray-900 font-bold'
+                    : 'text-white hover:bg-green-500'
                 }`}
               >
                 {active && (
-                  <div className="absolute inset-0 bg-white rounded-lg -z-0 shadow-sm" />
+                  <div className="absolute inset-0 bg-white rounded-xl shadow-none" />
                 )}
-                <span className="relative z-10">{link.icon}</span>
-                <span className="relative z-10 text-sm">{link.label}</span>
+                <span className={`relative z-10 ${active ? 'text-gray-900' : 'text-white'}`}>
+                  {link.icon}
+                </span>
+                <span className={`relative z-10 text-[15px] ${active ? 'text-gray-900' : 'text-white'}`}>
+                  {link.label}
+                </span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="mx-4 mb-6 bg-white rounded-xl p-4 shadow-sm">
-          <h4 className="text-sm font-semibold text-gray-900 mb-2">Need help?</h4>
-          <p className="text-xs text-gray-600 mb-3">Here&apos;s our contact number and email address</p>
-          <div className="space-y-2">
-            <a href="tel:1234567890" className="flex items-center space-x-2 text-xs text-green-600">
+        <div className="mx-4 mb-8 bg-white rounded-2xl p-5">
+          <h4 className="text-[15px] font-bold text-gray-900 mb-1">Need help?</h4>
+          <p className="text-[10px] text-gray-500 mb-4 leading-tight">
+            Here&apos;s our contact number and email address
+          </p>
+          <div className="space-y-3">
+            <a href="tel:1234567890" className="flex items-center space-x-3 text-xs text-green-600 font-semibold">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
               <span>1234567890</span>
             </a>
-            <a href="mailto:greenroot@gmail.com" className="flex items-center space-x-2 text-xs text-green-600 break-all">
+            <a href="mailto:greenroot@gmail.com" className="flex items-center space-x-3 text-xs text-green-600 font-semibold break-all">
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
@@ -180,6 +176,33 @@ export default function Sidebar({ userRole, isOpen, onClose }: SidebarProps) {
           </div>
         </div>
       </aside>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-green-600 border-t border-green-700 z-50">
+        <div className="flex items-center justify-around px-2 py-3 safe-area-pb">
+          {navLinks.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex flex-col items-center justify-center min-w-[60px] px-2 py-1 rounded-lg transition-all duration-200 ${
+                  active
+                    ? 'bg-white text-gray-900'
+                    : 'text-white'
+                }`}
+              >
+                <span className={active ? 'text-gray-900' : 'text-white'}>
+                  {link.icon}
+                </span>
+                <span className={`text-[10px] mt-1 font-medium ${active ? 'text-gray-900' : 'text-white'}`}>
+                  {link.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
     </>
   );
 }

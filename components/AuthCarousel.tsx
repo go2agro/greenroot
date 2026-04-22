@@ -54,7 +54,7 @@ export default function AuthCarousel() {
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
 
-      <div className="absolute top-12 left-12 z-10">
+      <div className="absolute bottom-20 left-12 z-10">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
             <span className="text-[#006e1c] font-bold text-xl">G</span>
