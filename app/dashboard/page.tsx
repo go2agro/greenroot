@@ -8,7 +8,7 @@ export default async function DashboardPage() {
     <div>
       <BannerAdsCarousel showIndicators={false} />
       <GreetingWidget username="Shubham" />
-      <ProfileCompletionCard currentStep={5} />
+      <ProfileCompletionCard currentStep={2} />
     </div>
   );
 }
