@@ -219,72 +219,100 @@ export default function InternshipsClient({ internships, savedInternshipIds }: I
 
       {paginatedInternships.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {paginatedInternships.map((internship) => {
               const isSaved = savedIds.has(internship.id);
               const isSaving = savingIds.has(internship.id);
+              
+              const getCountryFlag = (country: string) => {
+                const flags: Record<string, string> = {
+                  'Israel': 'IL',
+                  'India': 'IN',
+                  'USA': 'US',
+                  'United States': 'US',
+                  'UK': 'GB',
+                  'United Kingdom': 'GB',
+                  'Canada': 'CA',
+                  'Australia': 'AU',
+                  'Germany': 'DE',
+                  'France': 'FR',
+                  'Japan': 'JP',
+                  'Netherlands': 'NL',
+                };
+                return flags[country] || 'XX';
+              };
 
               return (
-                <div key={internship.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-2">
-                      <h2 className="text-xl font-semibold text-gray-900 flex-1">{internship.title}</h2>
-                      <button
-                        onClick={() => handleSaveToggle(internship.id)}
-                        disabled={isSaving}
-                        className={`ml-2 p-2 rounded-full transition-colors duration-200 ${
-                          isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
-                        }`}
-                        title={isSaved ? 'Remove from saved' : 'Save internship'}
-                      >
-                        <svg 
-                          className={`w-6 h-6 ${isSaved ? 'text-primary-600 fill-current' : 'text-gray-400'}`}
-                          fill={isSaved ? 'currentColor' : 'none'}
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" 
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <p className="text-primary-600 font-medium mb-4">{internship.company}</p>
-                    
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        {internship.location}
-                      </div>
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {internship.duration}
-                      </div>
-                      {internship.stipend && (
-                        <div className="flex items-center text-gray-600 text-sm">
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          {internship.stipend}
-                        </div>
-                      )}
-                    </div>
+                <div key={internship.id} className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-200 p-6 relative">
+                  <button
+                    onClick={() => handleSaveToggle(internship.id)}
+                    disabled={isSaving}
+                    className={`absolute top-4 right-4 transition-all duration-200 ${
+                      isSaving ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    title={isSaved ? 'Remove from saved' : 'Save internship'}
+                  >
+                    <svg 
+                      className={`w-6 h-6 ${isSaved ? 'text-yellow-500' : 'text-gray-300'}`}
+                      fill={isSaved ? 'currentColor' : 'none'}
+                      stroke="currentColor" 
+                      strokeWidth={2}
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" 
+                      />
+                    </svg>
+                  </button>
 
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">{internship.description}</p>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-8 rounded overflow-hidden border border-gray-200 flex-shrink-0">
+                      <img 
+                        src={`https://flagcdn.com/w40/${getCountryFlag(internship.country).toLowerCase()}.png`}
+                        alt={`${internship.country} flag`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                    <span className="text-2xl font-bold text-green-600">{internship.country}</span>
+                  </div>
 
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">{internship.title}</h2>
+                  
+                  <p className="text-gray-500 text-base mb-6">{internship.company}</p>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <span className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium">
+                      {internship.stipend || `₹${internship.stipend_amount?.toLocaleString('en-IN') || '0'} / mo`}
+                    </span>
+                    <span className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium">
+                      {internship.duration}
+                    </span>
+                    <span className="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg text-sm font-medium">
+                      {internship.title.toLowerCase().includes('precision') ? 'Precision Farming' : 
+                       internship.title.toLowerCase().includes('organic') ? 'Organic Farming' :
+                       internship.title.toLowerCase().includes('dairy') ? 'Dairy Farming' :
+                       internship.title.toLowerCase().includes('poultry') ? 'Poultry Farming' :
+                       'Agriculture'}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-3">
                     <Link
                       href={`/dashboard/internships/${internship.id}`}
-                      className="block w-full text-center bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
+                      className="flex-1 text-center py-3 border-2 border-green-600 text-green-600 font-semibold rounded-full hover:bg-green-50 transition-colors duration-200"
                     >
-                      View Details
+                      Details
+                    </Link>
+                    <Link
+                      href={`/dashboard/internships/${internship.id}/apply`}
+                      className="flex-1 text-center py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-colors duration-200"
+                    >
+                      Apply
                     </Link>
                   </div>
                 </div>

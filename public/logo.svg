@@ -1,0 +1,5 @@
+<svg width="140" height="50" viewBox="0 0 140 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="25" cy="25" r="20" fill="#16a34a"/>
+  <path d="M25 10 L20 20 L15 18 L25 35 L35 18 L30 20 Z" fill="white"/>
+  <text x="50" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#16a34a">GO2AGRO</text>
+</svg>
