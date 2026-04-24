@@ -27,11 +27,16 @@ export default async function StudentDashboardLayout({
     redirect('/admin/dashboard');
   }
 
+  const displayName = profile?.first_name && profile?.last_name 
+    ? `${profile.first_name} ${profile.last_name}`
+    : profile?.full_name || user.email?.split('@')[0];
+
   return (
     <DashboardLayout 
       userRole="student" 
-      userName={profile?.full_name || user.email?.split('@')[0]} 
+      userName={displayName} 
       userImage={profile?.profile_picture}
+      studentId={profile?.student_id}
     >
       {children}
     </DashboardLayout>

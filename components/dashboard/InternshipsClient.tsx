@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { Internship } from '@/types';
+import { useRouter } from 'next/navigation';
+import { Internship, Profile } from '@/types';
+import { checkProfileCompletion } from '@/lib/utils/profile';
+import { createClient } from '@/lib/supabase/client';
 
 interface InternshipsClientProps {
   internships: Internship[];
@@ -16,8 +19,41 @@ export default function InternshipsClient({ internships, savedInternshipIds }: I
   const [selectedStipend, setSelectedStipend] = useState<string>('all');
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set(savedInternshipIds));
   const [savingIds, setSavingIds] = useState<Set<string>>(new Set());
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
 
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    const checkProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        const profileStatus = checkProfileCompletion(profile as Profile);
+        setIsProfileComplete(profileStatus.isComplete);
+      } catch (error) {
+        console.error('Error checking profile:', error);
+      }
+    };
+
+    checkProfile();
+  }, []);
+
+  const handleApplyClick = (e: React.MouseEvent, internshipId: string) => {
+    if (!isProfileComplete) {
+      e.preventDefault();
+      setShowProfilePopup(true);
+    }
+  };
 
   const countries = useMemo(() => {
     const uniqueCountries = new Set(internships.map(i => i.country));
@@ -114,6 +150,39 @@ export default function InternshipsClient({ internships, savedInternshipIds }: I
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {showProfilePopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div className="flex items-start mb-4">
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div className="ml-3 flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Complete Your Profile</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Please complete your profile details before applying to internships.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowProfilePopup(false)}
+                className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => router.push('/dashboard/profile')}
+                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+              >
+                Complete Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
@@ -308,12 +377,22 @@ export default function InternshipsClient({ internships, savedInternshipIds }: I
                     >
                       Details
                     </Link>
-                    <Link
-                      href={`/dashboard/internships/${internship.id}/apply`}
-                      className="flex-1 text-center py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-colors duration-200"
-                    >
-                      Apply
-                    </Link>
+                    {isProfileComplete ? (
+                      <Link
+                        href={`/dashboard/internships/${internship.id}/apply`}
+                        className="flex-1 text-center py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-colors duration-200"
+                      >
+                        Apply
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={(e) => handleApplyClick(e, internship.id)}
+                        className="flex-1 text-center py-3 bg-gray-400 text-white font-semibold rounded-full cursor-not-allowed"
+                        disabled
+                      >
+                        Apply
+                      </button>
+                    )}
                   </div>
                 </div>
               );

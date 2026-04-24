@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
-import Link from 'next/link';
-import { checkProfileCompletion, formatMissingFields } from '@/lib/utils/profile';
+import { checkProfileCompletion } from '@/lib/utils/profile';
 import { Profile } from '@/types';
+import InternshipDetailClient from '@/components/dashboard/InternshipDetailClient';
 
 export default async function InternshipDetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
@@ -41,158 +41,10 @@ export default async function InternshipDetailPage({ params }: { params: { id: s
   const profileStatus = checkProfileCompletion(profile as Profile);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Link
-        href="/dashboard/internships"
-        className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-6"
-      >
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Internships
-      </Link>
-
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-primary-600 text-white p-8">
-          <h1 className="text-3xl font-bold mb-2">{internship.title}</h1>
-          <p className="text-xl">{internship.company}</p>
-        </div>
-
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Location</p>
-                <p className="font-semibold text-gray-900">{internship.location}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Duration</p>
-                <p className="font-semibold text-gray-900">{internship.duration}</p>
-              </div>
-            </div>
-
-            {internship.stipend && (
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                  <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Stipend</p>
-                  <p className="font-semibold text-gray-900">{internship.stipend}</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Internship</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">{internship.description}</p>
-          </div>
-
-          {internship.requirements && internship.requirements.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
-              <ul className="list-disc list-inside space-y-2">
-                {internship.requirements.map((req: string, index: number) => (
-                  <li key={index} className="text-gray-700">{req}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="border-t border-gray-200 pt-6">
-            {existingApplication ? (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <svg className="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <div>
-                    <p className="font-semibold text-green-900">Already Applied</p>
-                    <p className="text-green-700 text-sm">
-                      Status: <span className="capitalize">{existingApplication.status}</span>
-                    </p>
-                  </div>
-                </div>
-                <Link
-                  href={`/dashboard/applications/${existingApplication.id}`}
-                  className="mt-4 inline-block text-green-700 hover:text-green-800 font-semibold text-sm"
-                >
-                  View Application Details →
-                </Link>
-              </div>
-            ) : !profileStatus.isComplete ? (
-              <div>
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                  <div className="flex items-start">
-                    <svg className="w-6 h-6 text-yellow-600 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <div className="flex-1">
-                      <p className="font-semibold text-yellow-900 mb-1">Complete Your Profile First</p>
-                      <p className="text-yellow-800 text-sm mb-2">
-                        You need to complete your profile before applying to internships.
-                      </p>
-                      <p className="text-yellow-800 text-sm mb-2">
-                        <span className="font-medium">Profile Completion: {profileStatus.completionPercentage}%</span>
-                      </p>
-                      {profileStatus.missingFields.length > 0 && (
-                        <div className="text-yellow-800 text-sm">
-                          <p className="font-medium mb-1">Missing Information:</p>
-                          <ul className="list-disc list-inside space-y-0.5 ml-2">
-                            {profileStatus.missingFields.slice(0, 5).map((field, index) => (
-                              <li key={index}>{field}</li>
-                            ))}
-                            {profileStatus.missingFields.length > 5 && (
-                              <li>...and {profileStatus.missingFields.length - 5} more</li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <Link
-                    href="/dashboard/profile"
-                    className="flex-1 text-center bg-primary-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors duration-200"
-                  >
-                    Complete Profile
-                  </Link>
-                  <button
-                    disabled
-                    className="flex-1 bg-gray-300 text-gray-500 py-3 rounded-lg text-lg font-semibold cursor-not-allowed"
-                  >
-                    Apply Now
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <Link
-                href={`/dashboard/internships/${params.id}/apply`}
-                className="block w-full text-center bg-primary-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors duration-200"
-              >
-                Apply Now
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    <InternshipDetailClient 
+      internship={internship}
+      existingApplication={existingApplication}
+      profileStatus={profileStatus}
+    />
   );
 }

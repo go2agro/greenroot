@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { ChevronDown, ChevronUp, Upload } from 'lucide-react';
+import StudentIdCard from '@/components/StudentIdCard';
 
 const INDIAN_STATES = [
   'Andhra Pradesh',
@@ -47,6 +48,7 @@ interface ProfileData {
   id: string;
   email: string;
   role: string;
+  student_id?: string;
   first_name?: string;
   middle_name?: string;
   last_name?: string;
@@ -114,9 +116,11 @@ export default function ProfilePage() {
     setMessage('');
 
     try {
+      const { id, email, role, created_at, ...updateData } = profile;
+      
       const { error } = await supabase
         .from('profiles')
-        .update(profile)
+        .update(updateData)
         .eq('id', profile.id);
 
       if (error) throw error;
@@ -162,6 +166,20 @@ export default function ProfilePage() {
         <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
         <p className="text-gray-600 mt-2">Manage your account information.</p>
       </div>
+
+      {profile?.student_id && profile.role === 'student' && (
+        <div className="mb-8">
+          <StudentIdCard
+            studentId={profile.student_id}
+            firstName={profile.first_name}
+            lastName={profile.last_name}
+            email={profile.email}
+            universityCollege={profile.university_college}
+            profilePicture={profile.profile_picture}
+            variant="full"
+          />
+        </div>
+      )}
 
       {message && (
         <div className={`mb-6 p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>

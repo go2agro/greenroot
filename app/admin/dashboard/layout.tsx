@@ -27,10 +27,14 @@ export default async function AdminLayout({
     redirect('/dashboard');
   }
 
+  const displayName = profile?.first_name && profile?.last_name 
+    ? `${profile.first_name} ${profile.last_name}`
+    : profile?.full_name || user.email?.split('@')[0];
+
   return (
     <DashboardLayout 
       userRole="admin" 
-      userName={profile?.full_name || user.email?.split('@')[0]} 
+      userName={displayName} 
       userImage={profile?.profile_picture}
     >
       {children}

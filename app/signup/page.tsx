@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [userType, setUserType] = useState<'student' | 'admin'>('student');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
@@ -32,7 +33,7 @@ export default function SignupPage() {
     setPasswordError('');
     setConfirmPasswordError('');
     
-    const role = 'student';
+    const role = userType;
 
     if (!validateEmail(email)) {
       setEmailError('Invalid email address');
@@ -85,7 +86,11 @@ export default function SignupPage() {
           return;
         }
 
-        router.push('/dashboard');
+        if (role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Failed to create account');
@@ -120,6 +125,31 @@ export default function SignupPage() {
             <p className="text-[#191c1c]/60 leading-relaxed">
               Start your journey in international paid internship today.
             </p>
+          </div>
+
+          <div className="bg-[#e8ebe9] rounded-xl p-1 flex gap-1 mb-6">
+            <button
+              type="button"
+              onClick={() => setUserType('student')}
+              className={`flex-1 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                userType === 'student'
+                  ? 'bg-white text-[#191c1c] shadow-sm'
+                  : 'text-[#191c1c]/60 hover:text-[#191c1c]'
+              }`}
+            >
+              Student
+            </button>
+            <button
+              type="button"
+              onClick={() => setUserType('admin')}
+              className={`flex-1 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                userType === 'admin'
+                  ? 'bg-white text-[#191c1c] shadow-sm'
+                  : 'text-[#191c1c]/60 hover:text-[#191c1c]'
+              }`}
+            >
+              Admin
+            </button>
           </div>
 
           <form onSubmit={handleSignup} className="space-y-5">
